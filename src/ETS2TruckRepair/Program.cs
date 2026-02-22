@@ -6,11 +6,11 @@ using ETS2TruckRepair.Repair;
 using ETS2TruckRepair.Scanning;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
-Console.Title = "ETS2 Truck Repair v2.0";
+Console.Title = "MobilnyMechanik";
 
 Console.WriteLine("========================================");
-Console.WriteLine("   ETS2 Truck & Trailer Repair v2.0");
-Console.WriteLine("   CT-Based Injection Engine");
+Console.WriteLine("       MobilnyMechanik v2.0");
+Console.WriteLine("   ETS2 Truck Repair Tool");
 Console.WriteLine("========================================");
 Console.WriteLine();
 
@@ -172,9 +172,9 @@ static void PrintHelp()
     Console.WriteLine("  --help, -h       Wyswietl te pomoc");
     Console.WriteLine();
     Console.WriteLine("Przyklady:");
-    Console.WriteLine("  ETS2TruckRepair.exe                     Jednorazowa naprawa");
-    Console.WriteLine("  ETS2TruckRepair.exe --watch              Ciagle monitorowanie");
-    Console.WriteLine("  ETS2TruckRepair.exe --watch --interval=3");
+    Console.WriteLine("  MobilnyMechanik.exe                     Jednorazowa naprawa");
+    Console.WriteLine("  MobilnyMechanik.exe --watch              Ciagle monitorowanie");
+    Console.WriteLine("  MobilnyMechanik.exe --watch --interval=3");
 }
 
 static void WaitForKey()

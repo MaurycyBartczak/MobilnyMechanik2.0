@@ -1,4 +1,4 @@
-# ETS2 Truck Repair
+# MobilnyMechanik
 
 Narzędzie do naprawy ciężarówki w **Euro Truck Simulator 2** poprzez modyfikację pamięci gry.
 
@@ -24,9 +24,9 @@ Blokada zużycia utrzymuje się w pamięci dopóki gra działa. Po zamknięciu i
 ## Użycie
 
 1. Uruchom ETS2 i wjedź ciężarówką na drogę (musisz jechać, nie stać w menu)
-2. Uruchom `ETS2TruckRepair.exe` jako Administrator
+2. Uruchom `MobilnyMechanik.exe` jako Administrator
 3. Program naprawia ciężarówkę i blokuje zużycie
 4. Można uruchamiać wielokrotnie (np. po kolizji)
 
 
-Wynikiem jest jeden plik `ETS2TruckRepair.exe` (~64MB, zawiera .NET runtime).
+Wynikiem jest jeden plik `MobilnyMechanik.exe` (~64MB, zawiera .NET runtime).
