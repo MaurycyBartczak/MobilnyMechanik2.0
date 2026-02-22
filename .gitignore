@@ -20,3 +20,4 @@ Desktop.ini
 
 # Claude Code
 .claude/
+.agent/
