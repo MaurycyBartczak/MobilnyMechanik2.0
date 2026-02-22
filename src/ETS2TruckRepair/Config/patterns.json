@@ -1,0 +1,63 @@
+{
+  // ETS2 Truck Repair - Pattern Configuration
+  // Update patterns with real AOB from Cheat Engine / x64dbg
+
+  "truck": {
+    "description": "Instruction accessing truck engine damage float",
+    "pattern": "",
+    "module": "",
+    "extractionMethod": "rip_relative",
+    "operandOffset": 3,
+    "operandSize": 4,
+    "instructionLength": 7,
+    "pointerChain": [],
+    "damageFields": [
+      { "name": "Silnik", "offset": 0 },
+      { "name": "Skrzynia biegow", "offset": 4 },
+      { "name": "Kabina", "offset": 8 },
+      { "name": "Podwozie", "offset": 12 },
+      { "name": "Kola", "offset": 16 }
+    ],
+    "matchIndex": 0
+  },
+
+  "trailer": {
+    "description": "Instruction accessing trailer body damage float",
+    "pattern": "",
+    "module": "",
+    "extractionMethod": "rip_relative",
+    "operandOffset": 3,
+    "operandSize": 4,
+    "instructionLength": 7,
+    "pointerChain": [],
+    "damageFields": [
+      { "name": "Nadwozie", "offset": 0 },
+      { "name": "Podwozie", "offset": 4 },
+      { "name": "Kola", "offset": 8 },
+      { "name": "Ladunek", "offset": 12 }
+    ],
+    "matchIndex": 0
+  },
+
+  "watch": {
+    "enabled": false,
+    "intervalSeconds": 5,
+    "repairThreshold": 0.01
+  },
+
+  "fallback": {
+    "versionOffsets": {
+      "1.55": {
+        "baseOffset": 51305556,
+        "pointerChain": [],
+        "damageFields": [
+          { "name": "Silnik", "offset": 0 },
+          { "name": "Skrzynia biegow", "offset": 4 },
+          { "name": "Kabina", "offset": 8 },
+          { "name": "Podwozie", "offset": 12 },
+          { "name": "Kola", "offset": 16 }
+        ]
+      }
+    }
+  }
+}

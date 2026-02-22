@@ -1,0 +1,1163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="46">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>0</ID>
+      <Description>"No Fines"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobscanmodule(SelectFinesAOB,eurotrucks2.exe,48 8B C4 89 50 ?? 55 53 56 41 54 41 55 41 56 48 8D A8 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 48 8B F1) // should be unique
+alloc(SelectableCancelableFines, $256)
+
+label(code)
+registerSymbol(SelFines)
+label(return)
+
+SelectableCancelableFines+$100:
+SelFines:
+db 0  // Crash
+db 0  // Avoid Sleeping
+db 0  // Wrong Way
+db 0  // Speeding Camera
+db 0  // No Lights
+db 0  // Red Signal
+db 0  // Speeding
+db 0  // Avoid weighing
+db 0  // Illegal Trailer
+db 0  // Avoid Inspection
+db 0  // Illegal Border Crossing
+db 0  // Hard Shoulder Violation
+db 0  // Damaged Vehicle Usage
+db 0  // Illegal Trailer Weigh Station
+db 0  // Generic
+
+SelectableCancelableFines:
+cmp edx, 14
+jge GenericFine
+mov rax, SelFines
+add rax, edx
+movzx eax, byte ptr [rax]
+jmp FineCheck
+
+GenericFine:
+mov eax, [SelFines+14]
+jmp FineCheck
+
+FineCheck:
+test eax, eax
+je code
+ret
+
+code:
+  readmem(SelectFinesAOB, 32)
+  jmp return
+
+SelFinesAOBOrig:
+readmem(SelectFinesAOB, 32)
+registerSymbol(SelFinesAOBOrig)
+
+SelectFinesAOB:
+  jmp far SelectableCancelableFines
+  nop 12
+return:
+registersymbol(SelectFinesAOB)
+
+[DISABLE]
+
+SelectFinesAOB:
+readmem(SelFinesAOBOrig, 32)
+
+unregistersymbol(SelectFinesAOB)
+unregisterSymbol(SelFines)
+unregisterSymbol(SelFinesAOBOrig)
+dealloc(SelectableCancelableFines)
+
+{
+// ORIGINAL CODE - INJECTION POINT: eurotrucks2.exe+6AA9C0
+
+eurotrucks2.exe+6AA9B6: CC                    - int 3 
+eurotrucks2.exe+6AA9B7: CC                    - int 3 
+eurotrucks2.exe+6AA9B8: CC                    - int 3 
+eurotrucks2.exe+6AA9B9: CC                    - int 3 
+eurotrucks2.exe+6AA9BA: CC                    - int 3 
+eurotrucks2.exe+6AA9BB: CC                    - int 3 
+eurotrucks2.exe+6AA9BC: CC                    - int 3 
+eurotrucks2.exe+6AA9BD: CC                    - int 3 
+eurotrucks2.exe+6AA9BE: CC                    - int 3 
+eurotrucks2.exe+6AA9BF: CC                    - int 3 
+// ---------- INJECTING HERE ----------
+eurotrucks2.exe+6AA9C0: 48 8B C4              - mov rax,rsp
+// ---------- DONE INJECTING  ----------
+eurotrucks2.exe+6AA9C3: 89 50 10              - mov [rax+10],edx
+eurotrucks2.exe+6AA9C6: 55                    - push rbp
+eurotrucks2.exe+6AA9C7: 53                    - push rbx
+eurotrucks2.exe+6AA9C8: 56                    - push rsi
+eurotrucks2.exe+6AA9C9: 41 54                 - push r12
+eurotrucks2.exe+6AA9CB: 41 55                 - push r13
+eurotrucks2.exe+6AA9CD: 41 56                 - push r14
+eurotrucks2.exe+6AA9CF: 48 8D A8 58 FD FF FF  - lea rbp,[rax-000002A8]
+eurotrucks2.exe+6AA9D6: 48 81 EC 78 03 00 00  - sub rsp,00000378
+eurotrucks2.exe+6AA9DD: 48 8B F1              - mov rsi,rcx
+}
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>1</ID>
+          <Description>"Disable Crash"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+0", 1)
+[DISABLE]
+writeByte("SelFines+0", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>2</ID>
+          <Description>"Disable Avoid Sleeping"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+1", 1)
+[DISABLE]
+writeByte("SelFines+1", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>3</ID>
+          <Description>"Disable Wrong Way"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+2", 1)
+[DISABLE]
+writeByte("SelFines+2", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>4</ID>
+          <Description>"Disable Speeding Camera"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+3", 1)
+[DISABLE]
+writeByte("SelFines+3", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>5</ID>
+          <Description>"Disable No Lights"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+4", 1)
+[DISABLE]
+writeByte("SelFines+4", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>6</ID>
+          <Description>"Disable Red Signal"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+5", 1)
+[DISABLE]
+writeByte("SelFines+5", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>7</ID>
+          <Description>"Disable Speeding"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+6", 1)
+[DISABLE]
+writeByte("SelFines+6", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>8</ID>
+          <Description>"Disable Avoid weighing"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+7", 1)
+[DISABLE]
+writeByte("SelFines+7", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>9</ID>
+          <Description>"Disable Illegal Trailer"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+8", 1)
+[DISABLE]
+writeByte("SelFines+8", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>10</ID>
+          <Description>"Disable Avoid Inspection"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+9", 1)
+[DISABLE]
+writeByte("SelFines+9", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>11</ID>
+          <Description>"Disable Illegal Border Crossing"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+10", 1)
+[DISABLE]
+writeByte("SelFines+10", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>12</ID>
+          <Description>"Disable Hard Shoulder Violation"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+11", 1)
+[DISABLE]
+writeByte("SelFines+11", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>13</ID>
+          <Description>"Disable Damaged Vehicle Usage"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+12", 1)
+[DISABLE]
+writeByte("SelFines+12", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>14</ID>
+          <Description>"Disable Illegal Trailer Weigh Station"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+13", 1)
+[DISABLE]
+writeByte("SelFines+13", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>15</ID>
+          <Description>"Disable Generic"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{$lua}
+if syntaxcheck then return end
+[ENABLE]
+writeByte("SelFines+14", 1)
+[DISABLE]
+writeByte("SelFines+14", 0)
+{$asm}
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>18</ID>
+      <Description>"Infinite Money"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobscanmodule(NoMoneySpendAOB,eurotrucks2.exe,48 8B 41 10 48 2B C3)
+alloc(NoMoneySpend,$256,NoMoneySpendAOB)
+
+label(code)
+label(return)
+
+NoMoneySpend:
+mov rbx, 0
+
+code:
+  mov rax,[rcx+10]
+  sub rax,rbx
+  jmp return
+
+NoMoneySpendAOB:
+  jmp NoMoneySpend
+  nop 2
+return:
+registersymbol(NoMoneySpendAOB)
+
+[DISABLE]
+
+NoMoneySpendAOB:
+  db 48 8B 41 10 48 2B C3
+
+unregistersymbol(NoMoneySpendAOB)
+dealloc(NoMoneySpend)
+
+{
+// ORIGINAL CODE - INJECTION POINT: eurotrucks2.exe+6DA953
+
+eurotrucks2.exe+6DA92C: 48 85 D2                 - test rdx,rdx
+eurotrucks2.exe+6DA92F: 79 22                    - jns eurotrucks2.exe+6DA953
+eurotrucks2.exe+6DA931: 48 8D 0D B8 E2 65 01     - lea rcx,[eurotrucks2.exe+1D38BF0]
+eurotrucks2.exe+6DA938: E8 E3 BC AE FF           - call eurotrucks2.exe+1C6620
+eurotrucks2.exe+6DA93D: 48 F7 DB                 - neg rbx
+eurotrucks2.exe+6DA940: 45 33 C0                 - xor r8d,r8d
+eurotrucks2.exe+6DA943: 48 8B D3                 - mov rdx,rbx
+eurotrucks2.exe+6DA946: 48 8B CF                 - mov rcx,rdi
+eurotrucks2.exe+6DA949: E8 72 FE FF FF           - call eurotrucks2.exe+6DA7C0
+eurotrucks2.exe+6DA94E: E9 F8 00 00 00           - jmp eurotrucks2.exe+6DAA4B
+// ---------- INJECTING HERE ----------
+eurotrucks2.exe+6DA953: 48 8B 41 10              - mov rax,[rcx+10]
+// ---------- DONE INJECTING  ----------
+eurotrucks2.exe+6DA957: 48 2B C3                 - sub rax,rbx
+eurotrucks2.exe+6DA95A: 80 79 64 00              - cmp byte ptr [rcx+64],00
+eurotrucks2.exe+6DA95E: 48 89 41 10              - mov [rcx+10],rax
+eurotrucks2.exe+6DA962: 0F 85 C5 00 00 00        - jne eurotrucks2.exe+6DAA2D
+eurotrucks2.exe+6DA968: 48 85 C0                 - test rax,rax
+eurotrucks2.exe+6DA96B: 0F 89 BC 00 00 00        - jns eurotrucks2.exe+6DAA2D
+eurotrucks2.exe+6DA971: 48 8B 05 20 9C 92 02     - mov rax,[eurotrucks2.exe+3004598]
+eurotrucks2.exe+6DA978: C6 41 64 01              - mov byte ptr [rcx+64],01
+eurotrucks2.exe+6DA97C: 48 89 AC 24 B0 00 00 00  - mov [rsp+000000B0],rbp
+eurotrucks2.exe+6DA984: 33 ED                    - xor ebp,ebp
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>28</ID>
+      <Description>"Infinite Fuel"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobScanModule(InfiniteFuelAOB, eurotrucks2.exe, 8B FA 74 0B 48 8B 01 8B D7)
+registerSymbol(InfiniteFuelAOB)
+
+InfiniteFuelAOB+2:
+db EB
+[DISABLE]
+InfiniteFuelAOB+2:
+db 74
+
+unregisterSymbol(InfiniteFuelAOB)
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>46</ID>
+      <Description>"No Truck Damage"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobScanModule(NoWearTruckAOB, eurotrucks2.exe, 40 55 56 57 48 83 EC 70 48 8B B1 48 01 00 00 0F 57 E4)
+aobScanModule(NoDamageTruckAOB, eurotrucks2.exe, 48 83 EC 18 4C 8B 81 48 01 00 00)
+
+NoWearTruckAOB:
+ret
+
+NoDamageTruckAOB:
+ret
+[DISABLE]
+NoWearTruckAOB:
+db 40 55
+
+NoDamageTruckAOB:
+db 48 83 EC
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>31</ID>
+      <Description>"No Cargo Damage"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobscanmodule(NoCargoDamageAOB, eurotrucks2.exe, 48 83 EC 48 4C 8B 81 C8 00 00 00 0F 29 7C 24 20 0F 28 FA) // should be unique
+
+NoCargoDamageAOB:
+ret
+
+[DISABLE]
+
+NoCargoDamageAOB:
+  db 48 83 EC 48 4C 8B 81 C8 00 00 00 0F 29 7C 24 20 0F 28 FA
+
+{
+// ORIGINAL CODE - INJECTION POINT: eurotrucks2.exe+732A50
+
+eurotrucks2.exe+732A3C: CC                          - int 3 
+eurotrucks2.exe+732A3D: CC                          - int 3 
+eurotrucks2.exe+732A3E: CC                          - int 3 
+eurotrucks2.exe+732A3F: CC                          - int 3 
+eurotrucks2.exe+732A40: 48 8B 89 C8 00 00 00        - mov rcx,[rcx+000000C8]
+eurotrucks2.exe+732A47: E9 34 6D C6 FF              - jmp eurotrucks2.exe+399780
+eurotrucks2.exe+732A4C: CC                          - int 3 
+eurotrucks2.exe+732A4D: CC                          - int 3 
+eurotrucks2.exe+732A4E: CC                          - int 3 
+eurotrucks2.exe+732A4F: CC                          - int 3 
+// ---------- INJECTING HERE ----------
+eurotrucks2.exe+732A50: 48 83 EC 48                 - sub rsp,48
+// ---------- DONE INJECTING  ----------
+eurotrucks2.exe+732A54: 4C 8B 81 C8 00 00 00        - mov r8,[rcx+000000C8]
+eurotrucks2.exe+732A5B: 0F 29 7C 24 20              - movaps [rsp+20],xmm7
+eurotrucks2.exe+732A60: 0F 28 FA                    - movaps xmm7,xmm2
+eurotrucks2.exe+732A63: 84 D2                       - test dl,dl
+eurotrucks2.exe+732A65: 75 36                       - jne eurotrucks2.exe+732A9D
+eurotrucks2.exe+732A67: 48 8B 05 D2 1A 8D 02        - mov rax,[eurotrucks2.exe+3004540]
+eurotrucks2.exe+732A6E: 83 B8 20 07 00 00 02        - cmp dword ptr [rax+00000720],02
+eurotrucks2.exe+732A75: 75 15                       - jne eurotrucks2.exe+732A8C
+eurotrucks2.exe+732A77: 0F 28 C2                    - movaps xmm0,xmm2
+eurotrucks2.exe+732A7A: F3 41 0F 58 80 E8 1A 00 00  - addss xmm0,[r8+00001AE8]
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>38</ID>
+      <Description>"No Trailer Damage"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobScanModule(NoTrailerWearAOB, eurotrucks2.exe, 40 55 41 56 41 57 48 81 EC 80 00 00 00 48 8B A9 48 01 00 00)
+aobScanModule(NoTrailerDamageAOB, eurotrucks2.exe, 48 8B 81 48 01 00 00 0F 57 ED)
+
+NoTrailerDamageAOB:
+ret
+
+NoTrailerWearAOB:
+ret
+
+[DISABLE]
+NoTrailerDamageAOB:
+db 48 8B 81 48 01 00 00 0F 57 ED
+
+NoTrailerWearAOB:
+db 40 55 41 56 41 57 48 81 EC 80 00 00 00 48 8B A9 48 01 00 00
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>33</ID>
+      <Description>"No Fatigue"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobScanModule(NoFatigueAOB, eurotrucks2.exe, 41 01 BD A0 01 00 00 41 8B 85 A0 01 00 00)
+alloc(NoFatigue, $256, NoFatigueAOB)
+label(returnhere)
+label(exit)
+
+NoFatigue:
+mov [r13+1A0], 0
+mov edi, 0
+
+originalcode:
+add [r13+1A0], edi
+
+exit:
+jmp returnhere
+
+NoFatigueAOB:
+jmp NoFatigue
+nop 2
+returnhere:
+
+[DISABLE]
+NoFatigueAOB:
+db 41 01 BD A0 01 00 00 41 8B 85 A0 01 00 00
+dealloc(NoFatigue)
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>35</ID>
+      <Description>"Freeze Time"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobScanModule(FreezeTimeAOB, eurotrucks2.exe, F3 0F 11 85 60 01 00 00 48 8D 94 24 A8 00 00 00)
+
+FreezeTimeAOB:
+nop 8
+[DISABLE]
+FreezeTimeAOB:
+db F3 0F 11 85 60 01 00 00 48 8D 94 24 A8 00 00 00
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>42</ID>
+      <Description>"Money Multiplier"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobscanmodule(MoneyMultiplierAOB,eurotrucks2.exe,48 8B 49 10 48 03 CB) // should be unique
+alloc(MoneyMultipliers,$256,MoneyMultiplierAOB)
+
+label(code)
+label(return)
+registerSymbol(MoneyMultiplier)
+
+MoneyMultipliers:
+  push rax
+  mov rax, rbx
+  cvtsi2ss xmm0, rax
+  movss xmm1, [MoneyMultiplier]
+  mulss xmm0, xmm1
+  cvttss2si rax, xmm0
+  mov rbx, rax
+  pop rax
+
+code:
+  mov rcx,[rcx+10]
+  add rcx,rbx
+  jmp return
+
+MoneyMultiplier:
+dq (float)1.0
+
+MoneyMultiplierAOB:
+  jmp MoneyMultipliers
+  nop 2
+return:
+registersymbol(MoneyMultiplierAOB)
+
+[DISABLE]
+MoneyMultiplierAOB:
+  db 48 8B 49 10 48 03 CB
+
+unregistersymbol(MoneyMultiplierAOB)
+dealloc(MoneyMultipliers)
+
+{
+// ORIGINAL CODE - INJECTION POINT: eurotrucks2.exe+6DA803
+
+eurotrucks2.exe+6DA7DC: 48 85 D2                 - test rdx,rdx
+eurotrucks2.exe+6DA7DF: 79 22                    - jns eurotrucks2.exe+6DA803
+eurotrucks2.exe+6DA7E1: 48 8D 0D D8 E3 65 01     - lea rcx,[eurotrucks2.exe+1D38BC0]
+eurotrucks2.exe+6DA7E8: E8 33 BE AE FF           - call eurotrucks2.exe+1C6620
+eurotrucks2.exe+6DA7ED: 48 F7 DB                 - neg rbx
+eurotrucks2.exe+6DA7F0: 41 B0 01                 - mov r8b,01
+eurotrucks2.exe+6DA7F3: 48 8B D3                 - mov rdx,rbx
+eurotrucks2.exe+6DA7F6: 48 8B CF                 - mov rcx,rdi
+eurotrucks2.exe+6DA7F9: E8 12 01 00 00           - call eurotrucks2.exe+6DA910
+eurotrucks2.exe+6DA7FE: E9 F4 00 00 00           - jmp eurotrucks2.exe+6DA8F7
+// ---------- INJECTING HERE ----------
+eurotrucks2.exe+6DA803: 48 8B 49 10              - mov rcx,[rcx+10]
+// ---------- DONE INJECTING  ----------
+eurotrucks2.exe+6DA807: 48 03 CB                 - add rcx,rbx
+eurotrucks2.exe+6DA80A: 80 7F 64 00              - cmp byte ptr [rdi+64],00
+eurotrucks2.exe+6DA80E: 48 89 4F 10              - mov [rdi+10],rcx
+eurotrucks2.exe+6DA812: 0F 84 C1 00 00 00        - je eurotrucks2.exe+6DA8D9
+eurotrucks2.exe+6DA818: 48 85 C9                 - test rcx,rcx
+eurotrucks2.exe+6DA81B: 0F 88 B8 00 00 00        - js eurotrucks2.exe+6DA8D9
+eurotrucks2.exe+6DA821: 48 8B 05 70 9D 92 02     - mov rax,[eurotrucks2.exe+3004598]
+eurotrucks2.exe+6DA828: 48 8D 0D 57 B6 30 01     - lea rcx,[eurotrucks2.exe+19E5E86]
+eurotrucks2.exe+6DA82F: C6 47 64 00              - mov byte ptr [rdi+64],00
+eurotrucks2.exe+6DA833: 48 89 AC 24 B0 00 00 00  - mov [rsp+000000B0],rbp
+}
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>43</ID>
+          <Description>"Money Multiplier"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>MoneyMultiplier</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>49</ID>
+      <Description>"Speedhack"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+aobScanModule(GetVelocityFncAOB, eurotrucks2.exe, 48 8B DA 48 85 C9 74 66 48 8B 49 18)
+alloc(SpeedhackLogic, 128, GetVelocityFncAOB)
+
+globalalloc(SpeedupHotkey, 4)
+
+SpeedupHotkey:
+db BC
+
+SpeedhackLogic:
+{$c}
+#define EPSILON 0.00001f
+
+float sqrtf(float);
+
+typedef struct
+{
+    float x, y, z;
+} Vector3;
+
+typedef struct
+{
+    float x, y, z, w;
+} Quaternion;
+
+void quaternion_normalize(Quaternion* q)
+{
+    float magnitude = sqrtf(q-&gt;w*q-&gt;w + q-&gt;x*q-&gt;x + q-&gt;y*q-&gt;y + q-&gt;z*q-&gt;z);
+
+    if (magnitude &gt; EPSILON) {
+        q-&gt;w /= magnitude;
+        q-&gt;x /= magnitude;
+        q-&gt;y /= magnitude;
+        q-&gt;z /= magnitude;
+    } else {
+        q-&gt;w = 1.0f;
+        q-&gt;x = 0.0f;
+        q-&gt;y = 0.0f;
+        q-&gt;z = 0.0f;
+    }
+}
+
+Quaternion quaternion_conjugate(Quaternion q)
+{
+    Quaternion result;
+    result.w = q.w;
+    result.x = -q.x;
+    result.y = -q.y;
+    result.z = -q.z;
+    return result;
+}
+
+Quaternion quaternion_multiply(Quaternion q1, Quaternion q2)
+{
+    Quaternion result;
+
+    result.w = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
+    result.x = q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y;
+    result.y = q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x;
+    result.z = q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w;
+
+    return result;
+}
+
+Quaternion vector3_to_pure_quaternion(Vector3 v)
+{
+    Quaternion q_v;
+    q_v.w = 0.0f;
+    q_v.x = v.x;
+    q_v.y = v.y;
+    q_v.z = v.z;
+    return q_v;
+}
+
+Vector3 pure_quaternion_to_vector3(Quaternion q_v)
+{
+    Vector3 v;
+    v.x = q_v.x;
+    v.y = q_v.y;
+    v.z = q_v.z;
+    return v;
+}
+
+Vector3 rotate_vector_by_quaternion(Vector3 v, Quaternion q)
+{
+    quaternion_normalize(&amp;q);
+
+    Quaternion q_v = vector3_to_pure_quaternion(v);
+
+    Quaternion q_inv = quaternion_conjugate(q);
+
+    Quaternion temp = quaternion_multiply(q, q_v);
+    Quaternion rotated_q_v = quaternion_multiply(temp, q_inv);
+
+    return pure_quaternion_to_vector3(rotated_q_v);
+}
+{$asm}
+
+{$ccode pBaseCtrl=RCX}
+extern unsigned short GetAsyncKeyState(int vKey);
+
+if (!pBaseCtrl)
+    return;
+
+unsigned long long pGamePhysVeh = *(unsigned long long*)(pBaseCtrl + 0x18);
+if (!pGamePhysVeh)
+    return;
+
+unsigned long long physComponent = *(unsigned long long*)(pGamePhysVeh + 0x30);
+
+if (!physComponent)
+    return;
+
+unsigned long long pxRigidDynamic = *(unsigned long long*)(physComponent + 0xD8);
+
+if (!pxRigidDynamic)
+    return;
+
+Vector3 forward = {0.0f, 0.0f, -1.0f};
+forward = rotate_vector_by_quaternion(forward, *(Quaternion*)(pxRigidDynamic + 0x90));
+
+typedef enum
+{
+    eFORCE,
+    eIMPULSE,
+    eVELOCITY_CHANGE,
+    eACCELERATION
+} PxForceMode;
+
+extern int SpeedupHotkey;
+
+if (GetAsyncKeyState(SpeedupHotkey) &amp; 0x8000)
+{
+    extern float Force;
+
+    void **vftable = *(void***)pxRigidDynamic;
+    forward.x *= Force / 60.0f;
+    forward.y *= Force / 60.0f;
+    forward.z *= Force / 60.0f;
+    ((void(__stdcall *)(void *, Vector3 *, PxForceMode, unsigned char))vftable[41])(pxRigidDynamic, &amp;forward, eFORCE, 1);
+}
+{$asm}
+
+originalcode:
+mov rbx, rdx
+test rcx, rcx
+jmp returnhere
+
+Force:
+dd (float)2.0
+
+registerSymbol(Force)
+
+GetVelocityFncAOB:
+jmp SpeedhackLogic
+nop
+returnhere:
+[DISABLE]
+dealloc(SpeedhackLogic)
+unregisterSymbol(Force)
+
+GetVelocityFncAOB:
+db 48 8B DA 48 85 C9 74 66 48 8B 49 18
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>50</ID>
+          <Description>"Speedup hotkey"</Description>
+          <DropDownList ReadOnly="1" DescriptionOnly="1" DisplayValueAsItem="1">1:Left Mouse Button
+2:Right Mouse Button
+3:Cancel Key
+4:Middle Mouse Button
+5:X1 Mouse Button
+6:X2 Mouse Button
+8:Backspace Key
+9:Tab Key
+12:Clear Key
+13:Enter Key
+16:Shift Key
+17:Control Key
+18:Alt Key
+19:Pause Key
+20:Caps Lock Key
+21:Kana Key
+21:Hangul Key
+23:Junja Key
+24:Final Key
+25:Hanja Key
+25:Kanji Key
+27:Escape Key
+28:Convert Key
+29:Non-Convert Key
+30:Accept Key
+31:Mode Change Key
+32:Spacebar
+33:Page Up Key
+34:Page Down Key
+35:End Key
+36:Home Key
+37:Left Arrow Key
+38:Up Arrow Key
+39:Right Arrow Key
+40:Down Arrow Key
+41:Select Key
+42:Print Key
+43:Execute Key
+44:Print Screen Key
+45:Insert Key
+46:Delete Key
+47:Help Key
+48:0 Key
+49:1 Key
+50:2 Key
+51:3 Key
+52:4 Key
+53:5 Key
+54:6 Key
+55:7 Key
+56:8 Key
+57:9 Key
+65:A Key
+66:B Key
+67:C Key
+68:D Key
+69:E Key
+70:F Key
+71:G Key
+72:H Key
+73:I Key
+74:J Key
+75:K Key
+76:L Key
+77:M Key
+78:N Key
+79:O Key
+80:P Key
+81:Q Key
+82:R Key
+83:S Key
+84:T Key
+85:U Key
+86:V Key
+87:W Key
+88:X Key
+89:Y Key
+90:Z Key
+91:Left Windows Key
+92:Right Windows Key
+93:Applications Key
+95:Computer Sleep Key
+96:Numpad 0 Key
+97:Numpad 1 Key
+98:Numpad 2 Key
+99:Numpad 3 Key
+100:Numpad 4 Key
+101:Numpad 5 Key
+102:Numpad 6 Key
+103:Numpad 7 Key
+104:Numpad 8 Key
+105:Numpad 9 Key
+106:Multiply Key
+107:Add Key
+108:Separator Key
+109:Subtract Key
+110:Decimal Key
+111:Divide Key
+112:F1 Key
+113:F2 Key
+114:F3 Key
+115:F4 Key
+116:F5 Key
+117:F6 Key
+118:F7 Key
+119:F8 Key
+120:F9 Key
+121:F10 Key
+122:F11 Key
+123:F12 Key
+124:F13 Key
+125:F14 Key
+126:F15 Key
+127:F16 Key
+128:F17 Key
+129:F18 Key
+130:F19 Key
+131:F20 Key
+132:F21 Key
+133:F22 Key
+134:F23 Key
+135:F24 Key
+144:Num Lock Key
+145:Scroll Lock Key
+160:Left Shift Key
+161:Right Shift Key
+162:Left Control Key
+163:Right Control Key
+164:Left Alt Key
+165:Right Alt Key
+166:Browser Back Key
+167:Browser Forward Key
+168:Browser Refresh Key
+169:Browser Stop Key
+170:Browser Search Key
+171:Browser Favorites Key
+172:Browser Home Key
+173:Volume Mute Key
+174:Volume Down Key
+175:Volume Up Key
+176:Media Next Track Key
+177:Media Previous Track Key
+178:Media Stop Key
+179:Media Play/Pause Key
+180:Launch Mail Key
+181:Launch Media Select Key
+182:Launch App1 Key
+183:Launch App2 Key
+186:OEM 1 Key (e.g., ';:' on US keyboard)
+187:OEM Plus Key (e.g., '=+' on US keyboard)
+188:OEM Comma Key (e.g., ',&lt;' on US keyboard)
+189:OEM Minus Key (e.g., '-_' on US keyboard)
+190:OEM Period Key (e.g., '.&gt;' on US keyboard)
+191:OEM 2 Key (e.g., '/?' on US keyboard)
+192:OEM 3 Key (e.g., '`~' on US keyboard)
+219:OEM 4 Key (e.g., '[{' on US keyboard)
+220:OEM 5 Key (e.g., '\|' on US keyboard)
+221:OEM 6 Key (e.g., ']}' on US keyboard)
+222:OEM 7 Key (e.g., "''" on US keyboard)
+223:OEM 8 Key
+224:ICO F17 Key
+225:ICO F18 Key
+226:OEM 102 Key (e.g., '\|' on US keyboard for RT 102 key keyboards)
+227:ICO Help Key
+228:ICO 00 Key
+229:Process Key
+230:ICO Clear Key
+231:Packet Key
+233:OEM Reset Key
+234:OEM Jump Key
+235:OEM PA1 Key
+236:OEM PA2 Key
+237:OEM PA3 Key
+238:OEM Wsctrl Key
+239:OEM Cusel Key
+240:OEM Attn Key
+241:OEM Finish Key
+242:OEM Copy Key
+243:OEM Auto Key
+244:OEM Enlw Key
+245:OEM Backtab Key
+246:Attn Key
+247:Crsel Key
+248:Exsel Key
+249:Erase EOF Key
+250:Play Key
+251:Zoom Key
+252:No Name Key
+253:PA1 Key
+254:OEM Clear Key
+*:Invalid
+</DropDownList>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>SpeedupHotkey</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>52</ID>
+          <Description>"Force"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>Force</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry>
+      <Description>Code :movss [rbx+00000118],xmm1</Description>
+      <AddressString>eurotrucks2.exe+2739FA</AddressString>
+      <Before>
+        <Byte>83</Byte>
+        <Byte>14</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>8B</Byte>
+        <Byte>18</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>5C</Byte>
+        <Byte>24</Byte>
+        <Byte>30</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Code :movss [rdi+00000118],xmm0</Description>
+      <AddressString>eurotrucks2.exe+273B74</AddressString>
+      <Before>
+        <Byte>8F</Byte>
+        <Byte>14</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>87</Byte>
+        <Byte>18</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>4E</Byte>
+        <Byte>18</Byte>
+        <Byte>E8</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of movss [rsi+0000016C],xmm2</Description>
+      <AddressString>eurotrucks2.exe+57009F</AddressString>
+      <Before>
+        <Byte>76</Byte>
+        <Byte>03</Byte>
+        <Byte>0F</Byte>
+        <Byte>28</Byte>
+        <Byte>D3</Byte>
+      </Before>
+      <Actual>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>11</Byte>
+        <Byte>96</Byte>
+        <Byte>6C</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>F3</Byte>
+        <Byte>0F</Byte>
+        <Byte>59</Byte>
+        <Byte>88</Byte>
+        <Byte>98</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of dec [rbx+00000180]</Description>
+      <AddressString>eurotrucks2.exe+EC54A4</AddressString>
+      <Before>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>CB</Byte>
+      </Before>
+      <Actual>
+        <Byte>FF</Byte>
+        <Byte>8B</Byte>
+        <Byte>80</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>E8</Byte>
+        <Byte>E1</Byte>
+        <Byte>02</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of jna eurotrucks2.exe+EC58BA</Description>
+      <AddressString>eurotrucks2.exe+EC58B4</AddressString>
+      <Before>
+        <Byte>80</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>76</Byte>
+        <Byte>04</Byte>
+      </Actual>
+      <After>
+        <Byte>B2</Byte>
+        <Byte>01</Byte>
+        <Byte>EB</Byte>
+        <Byte>02</Byte>
+        <Byte>33</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>Change of je eurotrucks2.exe+EC538D</Description>
+      <AddressString>eurotrucks2.exe+EC537A</AddressString>
+      <Before>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+        <Byte>85</Byte>
+        <Byte>C0</Byte>
+      </Before>
+      <Actual>
+        <Byte>74</Byte>
+        <Byte>11</Byte>
+      </Actual>
+      <After>
+        <Byte>44</Byte>
+        <Byte>09</Byte>
+        <Byte>A3</Byte>
+        <Byte>9C</Byte>
+        <Byte>01</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols>
+    <SymbolEntry>
+      <Name>SpeedupHotkey</Name>
+      <Address>2430E770000</Address>
+    </SymbolEntry>
+  </UserdefinedSymbols>
+  <LuaScript>if getCEVersion() &lt; 7.6 then error("Some script may fail to execute, please, download the latest \"7.6\" version!") end
+</LuaScript>
+</CheatTable>
