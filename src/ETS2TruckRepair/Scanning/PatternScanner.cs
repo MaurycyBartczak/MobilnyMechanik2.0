@@ -188,7 +188,8 @@ public sealed class PatternScanner
     }
 
     private static bool IsExecutable(uint protect) =>
-        protect is MemoryConstants.PageExecuteRead or MemoryConstants.PageExecuteReadWrite;
+        protect is MemoryConstants.PageExecute or MemoryConstants.PageExecuteRead
+            or MemoryConstants.PageExecuteReadWrite or MemoryConstants.PageExecuteWriteCopy;
 
     private static bool IsReadable(uint protect) =>
         protect is MemoryConstants.PageReadOnly or MemoryConstants.PageReadWrite

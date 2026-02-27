@@ -45,10 +45,23 @@ public sealed class RepairEngine : IDisposable
 
     public bool AttachToGame()
     {
-        var processes = Process.GetProcessesByName("eurotrucks2");
-        if (processes.Length == 0) return false;
+        // Use Toolhelp32 API (works under Wine/Proton, unlike .NET Process.GetProcessesByName)
+        var (pid, exeName) = Kernel32.FindProcessByName("eurotrucks2");
 
-        _process = processes[0];
+        if (pid == 0)
+        {
+            // Diagnostyka — wypisz wszystkie widoczne procesy
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("\n  Nie znaleziono 'eurotrucks2'. Widoczne procesy:");
+            foreach (var (pPid, pName) in Kernel32.ListAllProcesses())
+            {
+                Console.WriteLine($"    {pName} (PID: {pPid})");
+            }
+            Console.ResetColor();
+            return false;
+        }
+
+        _process = Process.GetProcessById(pid);
 
         var (moduleBase, moduleSize) = ModuleHelper.GetModuleInfo(_process);
         if (moduleBase == nint.Zero) return false;
@@ -57,7 +70,7 @@ public sealed class RepairEngine : IDisposable
         _moduleSize = moduleSize;
         _memory = new ProcessMemory(_process.Id, moduleBase);
 
-        Console.WriteLine($"  Proces: {_process.ProcessName} (PID: {_process.Id})");
+        Console.WriteLine($"  Proces: {exeName} (PID: {pid})");
         Console.WriteLine($"  Modul: 0x{moduleBase:X} ({moduleSize / 1024}KB)");
 
         return _memory.IsValid;
@@ -129,6 +142,26 @@ public sealed class RepairEngine : IDisposable
                 Console.WriteLine($"  [Ciezarowka] Kola: wyzerowano {wheelZeroed} wartosci.");
                 Console.ResetColor();
                 ok = true;
+            }
+        }
+
+        // 3. Zablokuj zapisy WEAR w damage function
+        //    Damage function przy kolizji przywraca stare wear values — NOP-ujemy TYLKO te zapisy
+        //    ktore dotycza znanych wear offsetow, reszta (kolizje) dziala normalnie
+        var damageFunc = FindFunction(TruckDamageAOB);
+        if (damageFunc != nint.Zero)
+        {
+            var wearOffsetSet = new HashSet<int>(directOffsets);
+            // Dodaj zakresy kol jako wear offsets
+            for (int o = 0x100; o < 0x158; o += 4) wearOffsetSet.Add(o);
+            for (int o = 0x300; o < 0x380; o += 4) wearOffsetSet.Add(o);
+
+            int nopCount = NopDamageStoresAtOffsets(damageFunc, wearOffsetSet);
+            if (nopCount > 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"  [Ciezarowka] Zablokowano {nopCount} zapisow wear w damage function.");
+                Console.ResetColor();
             }
         }
 
@@ -239,6 +272,85 @@ public sealed class RepairEngine : IDisposable
         }
 
         return zeroed;
+    }
+
+    /// <summary>
+    /// Skanuje damage function i NOP-uje TYLKO movss store do znanych wear offsetow.
+    /// Damage function uzywa R8 jako body pointer (mov r8, [rcx+0x148]).
+    /// R8 wymaga REX.B prefix — rm=0 z REX.B=1 oznacza R8.
+    /// Skanuje WSZYSTKIE movss stores (dowolny rejestr bazowy) i NOP-uje te z wear offsetami.
+    /// </summary>
+    private int NopDamageStoresAtOffsets(nint funcAddr, HashSet<int> wearOffsets)
+    {
+        if (_memory is null) return 0;
+
+        var code = _memory.ReadBytes(funcAddr, FuncScanSize);
+        if (code is null) return 0;
+
+        var toNop = new List<(int offset, int length)>();
+
+        for (int i = 0; i < code.Length - 10; i++)
+        {
+            int startPos = i;
+            int pos = i;
+
+            if (code[pos] != 0xF3) continue;
+            pos++;
+
+            // REX prefix (0x40-0x4F) — moze byc potrzebny dla R8-R15
+            if (pos < code.Length && (code[pos] & 0xF0) == 0x40)
+                pos++;
+
+            if (pos + 1 >= code.Length || code[pos] != 0x0F) continue;
+            if (code[pos + 1] != 0x11) continue; // only movss stores
+            pos += 2;
+
+            if (pos >= code.Length) continue;
+            byte modrm = code[pos];
+            pos++;
+
+            int mod = (modrm >> 6) & 3;
+            int rm = modrm & 7;
+
+            if (mod == 0 || mod == 3) continue;
+
+            if (rm == 4 && pos < code.Length)
+                pos++; // skip SIB
+
+            int displacement = 0;
+            if (mod == 1 && pos < code.Length)
+            {
+                displacement = (sbyte)code[pos];
+                pos += 1;
+            }
+            else if (mod == 2 && pos + 3 < code.Length)
+            {
+                displacement = BitConverter.ToInt32(code, pos);
+                pos += 4;
+            }
+
+            if (displacement < 0x20 || displacement > 0x10000) continue;
+
+            // Sprawdz czy nie za koniec funkcji
+            bool pastRet = false;
+            for (int j = startPos - 1; j >= Math.Max(0, startPos - 30); j--)
+            {
+                if (code[j] == 0xC3) { pastRet = true; break; }
+            }
+            if (pastRet) break;
+
+            // NOP jezeli offset jest w zbiorze wear offsets
+            if (wearOffsets.Contains(displacement))
+            {
+                int instrLength = pos - startPos;
+                toNop.Add((startPos, instrLength));
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine($"    NOP damage store @ +0x{startPos:X}: disp=0x{displacement:X}");
+                Console.ResetColor();
+            }
+        }
+
+        return NopStoreInstructions(funcAddr, toNop);
     }
 
     /// <summary>
@@ -682,7 +794,16 @@ public sealed class RepairEngine : IDisposable
 
         var (pattern, mask) = PatternScanner.ParsePattern(aobPattern);
         var scanner = new PatternScanner(_memory.ProcessHandle);
+
+        // Try executable regions first
         var matches = scanner.ScanModule(_moduleBase, _moduleSize, pattern, mask);
+        if (matches.Count > 0) return matches[0];
+
+        // Fallback: scan all readable regions (Wine may report different protection flags)
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine("    (fallback: skanowanie wszystkich regionow...)");
+        Console.ResetColor();
+        matches = scanner.ScanDataRegions(_moduleBase, _moduleSize, pattern, mask);
 
         return matches.Count > 0 ? matches[0] : nint.Zero;
     }
